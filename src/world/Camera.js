@@ -3,7 +3,7 @@ class Camera {
     static minHeight = 5
     static maxHeight = 40
     static zoomStep = 5
-    static panSpeed = 5
+    static panSpeed = 0.5
 
     static init(scene) {
         this.scene = scene;
@@ -24,8 +24,8 @@ class Camera {
         this.height = this.cam.height
         this.width  = this.cam.width
 
-        let vx = (Input.rightKey.isDown - Input.leftKey.isDown) * this.panSpeed
-        let vy = (Input.downKey.isDown - Input.upKey.isDown) * this.panSpeed
+        let vx = (Input.rightKey.isDown - Input.leftKey.isDown) * this.panSpeed * this.unitHeight
+        let vy = (Input.downKey.isDown - Input.upKey.isDown) * this.panSpeed * this.unitHeight
         this.pos.x += vx * dt
         this.pos.y += vy * dt
         
