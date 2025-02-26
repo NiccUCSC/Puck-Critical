@@ -4,13 +4,14 @@ class Play extends Phaser.Scene {
     }
 
     init() {
-        this.spawnTime = 0.025
+        this.spawnTime = 0.5
         this.timeToSpawn = 0
     }
 
     preload() {
         this.load.path = './assets/'
         this.load.image('puck', 'ball.png')
+        this.load.image('puckSpawner', 'PuckTemp.png')
     }
 
     create() {
@@ -19,22 +20,16 @@ class Play extends Phaser.Scene {
         Camera.init(this)
 
         this.pucks = new Set()
-
+        this.machines = new Set()
+        let spawner = new PuckSpawner(play, 0, 0, {dir: {x: 1, y: 0}})
+        this.machines.add(spawner)
     }
 
 
     // called before physics step
     beforeStep(time, dt) {
-        play.timeToSpawn += dt
-        if (play.timeToSpawn > play.spawnTime) {
-            play.timeToSpawn -= play.spawnTime
-            let newPuck = new Puck(play, 0, 0)
-            let vx = 5 * Math.cos(time)
-            let vy = 5 * Math.sin(time)
-            newPuck.setVelocity(vx, vy)
-            play.pucks.add(newPuck)
-        }
-        for (let puck of play.pucks) puck.physicsUpdate()
+        play.pucks.forEach(puck => puck.physicsUpdate(time, dt))
+        play.machines.forEach(machine => machine.physicsUpdate(time, dt))
 
     }
 
@@ -49,6 +44,7 @@ class Play extends Phaser.Scene {
         Physics.update(time, dt, this.beforeStep, this.afterStep)
         Camera.update(time, dt)
 
-        for (let puck of this.pucks) puck.visualUpdate()
+        play.pucks.forEach(puck => puck.visualUpdate())
+        play.machines.forEach(machine => machine.visualUpdate())   
     }
 }

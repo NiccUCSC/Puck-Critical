@@ -10,15 +10,15 @@ class Puck extends Phaser.GameObjects.Sprite {
         this.setOrigin(0.5, 0.5)
         this.instance_id = Puck.instance_id++
 
+        this.size = 0.8
+
 
         this.physicsBody = Physics.world.createBody({
             type: "dynamic",
             position: planck.Vec2(x, y),
-
-
         })
         this.physicsBody.createFixture({
-            shape: planck.Circle(0.5),
+            shape: planck.Circle(this.size/2),
             friction: 0,
             restitution: 1,
         })
@@ -64,7 +64,7 @@ class Puck extends Phaser.GameObjects.Sprite {
         aproxPos.add(deltaPos)
 
         this.setPosition(aproxPos.x * Physics.unit, aproxPos.y * Physics.unit)
-        this.setDisplaySize(Physics.unit, Physics.unit)
+        this.setDisplaySize(this.size * Physics.unit, this.size * Physics.unit)
     }
 
     destroy() {
