@@ -1,10 +1,14 @@
 class Puck extends Phaser.GameObjects.Sprite {
+    static instance_id = 0
+    static max_alive = 200
+
     constructor(scene, x, y) {
         super(scene, 0, 0, "puck")
         scene.add.existing(this)
         this.scene = scene
         this.setDepth(10)
         this.setOrigin(0.5, 0.5)
+        this.instance_id = Puck.instance_id++
 
 
         this.physicsBody = Physics.world.createBody({
@@ -32,6 +36,11 @@ class Puck extends Phaser.GameObjects.Sprite {
     }
 
     physicsUpdate() {
+        if (this.instance_id < Puck.instance_id - Puck.max_alive) {
+            this.destroy()
+            return
+        }
+
         let pos = this.physicsBody.getPosition()
         let vel = this.physicsBody.getLinearVelocity()
         let speed = Math.sqrt(vel.x*vel.x + vel.y*vel.y)
@@ -56,5 +65,12 @@ class Puck extends Phaser.GameObjects.Sprite {
 
         this.setPosition(aproxPos.x * Physics.unit, aproxPos.y * Physics.unit)
         this.setDisplaySize(Physics.unit, Physics.unit)
+    }
+
+    destroy() {
+        this.scene.pucks.delete(this)
+        Physics.world.destroyBody(this.physicsBody)
+        this.physicsBody.delete
+        super.destroy()
     }
 }

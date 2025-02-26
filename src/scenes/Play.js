@@ -4,7 +4,7 @@ class Play extends Phaser.Scene {
     }
 
     init() {
-        this.spawnTime = 0.25
+        this.spawnTime = 0.025
         this.timeToSpawn = 0
     }
 
@@ -18,7 +18,7 @@ class Play extends Phaser.Scene {
         Physics.init(this)
         Camera.init(this)
 
-        this.pucks = []
+        this.pucks = new Set()
 
     }
 
@@ -32,7 +32,7 @@ class Play extends Phaser.Scene {
             let vx = 5 * Math.cos(time)
             let vy = 5 * Math.sin(time)
             newPuck.setVelocity(vx, vy)
-            play.pucks.push(newPuck)
+            play.pucks.add(newPuck)
         }
         for (let puck of play.pucks) puck.physicsUpdate()
 
@@ -44,8 +44,7 @@ class Play extends Phaser.Scene {
     update(time, dt) {
         time /= 1000
         dt /= 1000
-        console.log(1/dt)
-        console.log(this.pucks.length)
+        if (1/dt < 100) console.warn(`Pucks: ${this.pucks.length}, Framerate: ${1/dt}`)
 
         Physics.update(time, dt, this.beforeStep, this.afterStep)
         Camera.update(time, dt)
