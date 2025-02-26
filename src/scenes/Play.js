@@ -18,6 +18,7 @@ class Play extends Phaser.Scene {
         play = this
         Physics.init(this)
         Camera.init(this)
+        Input.init(this)
 
         this.pucks = new Set()
         this.machines = new Set()

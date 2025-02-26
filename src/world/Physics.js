@@ -3,6 +3,8 @@ class Physics {
     static tickRate     = 64
     static tick         = 0
     static time         = 0
+    static minTimeScale = 1 / 16
+    static maxTimeScale = 16
 
     static init(debugScene) {
         this.world = planck.World(planck.Vec2(0, 0))    // Gravity
@@ -11,7 +13,7 @@ class Physics {
         this.timeScale  = 1                             // physics time scale
     
         this.debugGraphics = debugScene.add.graphics()
-        this.debugMode = true
+        this.debugMode = false
     }
 
     static update(time, dt, beforeStep, afterStep) {
@@ -23,6 +25,26 @@ class Physics {
             afterStep(this.time, this.tickTime)
             if (this.debugMode) this.drawDebugGraphics()
         }
+    }
+
+    static toggleDebug() {
+        this.debugMode = !this.debugMode
+        if (!this.debugMode) this.debugGraphics.clear()
+        else this.drawDebugGraphics()
+    }
+
+    static increaseTimeScale() {
+        this.timeScale *= 2
+        if (!this.timeScale) this.timeScale = this.minTimeScale
+        this.timeScale = Math.min(this.timeScale, this.maxTimeScale)
+        console.log(this.timeScale)
+    }
+
+    static decreaseTimeScale() {
+        this.timeScale /= 2
+        if (this.timeScale < this.minTimeScale) this.timeScale = 0
+        console.log(this.timeScale)
+
     }
 
     static drawDebugGraphics() {

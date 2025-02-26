@@ -16,8 +16,8 @@ class PuckSpawner extends Phaser.GameObjects.Sprite {
 
         // instance vars
         this.timeToSpawn    = 1
-        this.spawnDelay     = 0.5
-        this.launchSpeed    = 3
+        this.spawnDelay     = 1
+        this.launchSpeed    = 5
         this.dir            = planck.Vec2(params.dir.x, params.dir.y)
         this.dir.normalize()
 
@@ -37,11 +37,13 @@ class PuckSpawner extends Phaser.GameObjects.Sprite {
         if (this.timeToSpawn <= 0) {
             this.timeToSpawn += this.spawnDelay
 
-            const pos = this.physicsBody.getPosition()
-            let newPuck = new Puck(this.scene, pos.x, pos.y)
             let vx = this.dir.x * this.launchSpeed
             let vy = this.dir.y * this.launchSpeed
-            newPuck.setVelocity(vx, vy)
+            const pos = this.physicsBody.getPosition()
+            let newPuck = new Puck(this.scene, pos.x, pos.y, {
+                spawnVelocity: planck.Vec2(vx, vy)
+            })
+
             play.pucks.add(newPuck)
         }
 
