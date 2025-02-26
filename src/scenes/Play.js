@@ -21,7 +21,7 @@ class Play extends Phaser.Scene {
 
         this.pucks = new Set()
         this.machines = new Set()
-        let spawner = new PuckSpawner(play, 0, 0, {dir: {x: 1, y: 0}})
+        let spawner = new PuckSpawner(play, 0, 0, {dir: {x: 1, y: 1}})
         this.machines.add(spawner)
     }
 

@@ -44,6 +44,10 @@ class PuckSpawner extends Phaser.GameObjects.Sprite {
             newPuck.setVelocity(vx, vy)
             play.pucks.add(newPuck)
         }
+
+        let angle = Math.atan2(this.dir.y, this.dir.x)
+        this.physicsBody.setAngle(angle)
+        this.setRotation(angle)
     }
 
     visualUpdate() {
