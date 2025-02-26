@@ -1,4 +1,4 @@
-class PuckSpawner extends Phaser.GameObjects.Sprite {
+class PuckBouncer extends Phaser.GameObjects.Sprite {
     static instance_id = 0
 
     static defaultParams = {
@@ -6,52 +6,51 @@ class PuckSpawner extends Phaser.GameObjects.Sprite {
     }
 
     constructor(scene, x, y, params={}) {
-        params = {...PuckSpawner.defaultParams, ...params}
-        super(scene, 0, 0, "puckSpawner")
+        params = {...PuckBouncer.defaultParams, ...params}
+        super(scene, 0, 0, "puckBouncer")
         scene.add.existing(this)
         this.scene = scene
-        this.setDepth(5)
+        this.setDepth(4)
         this.setOrigin(0.5, 0.5)
-        this.instance_id = PuckSpawner.instance_id++
+        this.instance_id = PuckBouncer.instance_id++
 
         // instance vars
-        this.timeToSpawn    = 1
-        this.spawnDelay     = 1
-        this.launchSpeed    = 5
         this.dir            = planck.Vec2(params.dir.x, params.dir.y)
         this.dir.normalize()
 
+        // body of the piston base
         this.physicsBody = Physics.world.createBody({
             type: "static",
             position: planck.Vec2(x, y),
         })
         this.physicsBody.createFixture({
-            shape: planck.Box(0.5, 0.5),
-            isSensor: true,
+            shape: planck.Box(0.25, 1, planck.Vec2(-0.25, 0)),
+        })
+
+        // body of the piston
+        this.pistonBody = Physics.world.createBody({
+            type: "kinematic",
+            position: planck.Vec2(x, y),
+        })
+        this.pistonBody.createFixture({
+            shape: planck.Box(0.25, 1, planck.Vec2(0.25, 0)),
+            type: 'kinematic'
         })
     }
 
+
     physicsUpdate(time, dt) {
-        this.timeToSpawn -= dt
-        if (this.timeToSpawn <= 0) {
-            this.timeToSpawn += this.spawnDelay
-
-            let vx = this.dir.x * this.launchSpeed
-            let vy = this.dir.y * this.launchSpeed
-            const pos = this.physicsBody.getPosition()
-            let newPuck = new Puck(this.scene, pos.x, pos.y, {
-                spawnVelocity: planck.Vec2(vx, vy)
-            })
-
-            play.pucks.add(newPuck)
-        }
 
         let angle = Math.atan2(this.dir.y, this.dir.x)
         this.physicsBody.setAngle(angle)
+        this.pistonBody.setAngle(angle)
+        this.pistonBody.setLinearVelocity(this.dir.clone().mul(4))
         this.setRotation(angle)
     }
 
-    afterPhysicsUpdate(time, dt) { }
+    afterPhysicsUpdate(time, dt) {
+        this.pistonBody.setPosition(this.physicsBody.getPosition())
+    }
 
     visualUpdate() {
         let aproxPos = this.physicsBody.getPosition().clone()
@@ -61,12 +60,13 @@ class PuckSpawner extends Phaser.GameObjects.Sprite {
         aproxPos.add(deltaPos)
 
         this.setPosition(aproxPos.x * Physics.unit, aproxPos.y * Physics.unit)
-        this.setDisplaySize(Physics.unit, Physics.unit)
+        this.setDisplaySize(Physics.unit, 2 * Physics.unit)
     }
 
     destroy() {
         this.scene.machines.delete(this)
         Physics.world.destroyBody(this.physicsBody)
+        Physics.world.destroyBody(this.pistonBody)
         this.physicsBody.delete
         super.destroy()
     }

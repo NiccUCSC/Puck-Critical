@@ -12,6 +12,8 @@ class Play extends Phaser.Scene {
         this.load.path = './assets/'
         this.load.image('puck', 'ball.png')
         this.load.image('puckSpawner', 'PuckTemp.png')
+        this.load.image('puckBouncer', 'bumper.jpeg')
+        this.load.image('puckGoal', 'goal.jpeg')
     }
 
     create() {
@@ -22,8 +24,14 @@ class Play extends Phaser.Scene {
 
         this.pucks = new Set()
         this.machines = new Set()
-        let spawner = new PuckSpawner(play, 0, 0, {dir: {x: 1, y: 1}})
+        let spawner = new PuckSpawner(play, 0, 0, { dir: {x: 1, y: 1} })
+        let bouncer = new PuckBouncer(play, 2, 3, { dir: {x: 0.25, y: -1} })
+        let goal = new PuckGoal(play, 4, -8, { dir: {x: 1, y: 0} })
+        let goal1 = new PuckGoal(play, 8, -4, { dir: {x: 1, y: 0} })
         this.machines.add(spawner)
+        this.machines.add(bouncer)
+        this.machines.add(goal)
+        this.machines.add(goal1)
     }
 
 
@@ -35,7 +43,9 @@ class Play extends Phaser.Scene {
     }
 
     // called after physics step
-    afterStep(time, dt) { }
+    afterStep(time, dt) { 
+        play.machines.forEach(machine => machine.afterPhysicsUpdate(time, dt))
+    }
 
     update(time, dt) {
         time /= 1000

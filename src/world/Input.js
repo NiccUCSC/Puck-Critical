@@ -1,19 +1,19 @@
 class Input {
     static init(playScene) {
-        let addKey = playScene.input.keyboard.addKey
+        let addKey = keycode => playScene.input.keyboard.addKey(keycode)
         let KeyCodes = Phaser.Input.Keyboard.KeyCodes
 
-        this.upKey = playScene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
-        this.downKey = playScene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
-        this.leftKey = playScene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
-        this.rightKey = playScene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
+        this.upKey = addKey(KeyCodes.W)
+        this.downKey = addKey(KeyCodes.S)
+        this.leftKey = addKey(KeyCodes.A)
+        this.rightKey = addKey(KeyCodes.D)
 
-        this.debugKey = playScene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E)
-        this.timeScaleUpKey = playScene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.COMMA)
-        this.timeScaleDownKey = playScene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PERIOD)
-        this.zoomInKey = playScene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.CLOSED_BRACKET)
-        this.zoomOutKey = playScene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.OPEN_BRACKET)
-        this.restartKey = playScene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
+        this.debugKey = addKey(KeyCodes.E)
+        this.timeScaleUpKey = addKey(KeyCodes.COMMA)
+        this.timeScaleDownKey = addKey(KeyCodes.PERIOD)
+        this.zoomInKey = addKey(KeyCodes.CLOSED_BRACKET)
+        this.zoomOutKey = addKey(KeyCodes.OPEN_BRACKET)
+        this.restartKey = addKey(KeyCodes.R)
 
 
         this.debugKey.on('down', () => { Physics.toggleDebug() })

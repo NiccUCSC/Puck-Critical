@@ -23,7 +23,7 @@ class Puck extends Phaser.GameObjects.Sprite {
 
 
         this.physicsBody = Physics.world.createBody({
-            type: "dynamic",
+            type: "static",
             position: planck.Vec2(x, y),
         })
         this.physicsBody.createFixture({
@@ -41,6 +41,7 @@ class Puck extends Phaser.GameObjects.Sprite {
     }
 
     onSpawn() {
+        this.physicsBody.setDynamic()
         this.setVelocity(this.spawnVelocity)
     }
 

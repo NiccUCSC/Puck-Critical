@@ -1,4 +1,4 @@
-class PuckSpawner extends Phaser.GameObjects.Sprite {
+class PuckGoal extends Phaser.GameObjects.Sprite {
     static instance_id = 0
 
     static defaultParams = {
@@ -6,18 +6,15 @@ class PuckSpawner extends Phaser.GameObjects.Sprite {
     }
 
     constructor(scene, x, y, params={}) {
-        params = {...PuckSpawner.defaultParams, ...params}
-        super(scene, 0, 0, "puckSpawner")
+        params = {...PuckGoal.defaultParams, ...params}
+        super(scene, 0, 0, "puckGoal")
         scene.add.existing(this)
         this.scene = scene
         this.setDepth(5)
         this.setOrigin(0.5, 0.5)
-        this.instance_id = PuckSpawner.instance_id++
+        this.instance_id = PuckGoal.instance_id++
 
         // instance vars
-        this.timeToSpawn    = 1
-        this.spawnDelay     = 1
-        this.launchSpeed    = 5
         this.dir            = planck.Vec2(params.dir.x, params.dir.y)
         this.dir.normalize()
 
@@ -26,26 +23,21 @@ class PuckSpawner extends Phaser.GameObjects.Sprite {
             position: planck.Vec2(x, y),
         })
         this.physicsBody.createFixture({
-            shape: planck.Box(0.5, 0.5),
+            shape: planck.Box(0.3, 1.8, planck.Vec2(-0.5, 0)),
             isSensor: true,
+        })
+        this.physicsBody.createFixture({
+            shape: planck.Box(0.1, 2, planck.Vec2(-0.9, 0)),
+        })
+        this.physicsBody.createFixture({
+            shape: planck.Box(1, 0.1, planck.Vec2(0, -1.9)),
+        })
+        this.physicsBody.createFixture({
+            shape: planck.Box(1, 0.1, planck.Vec2(0, 1.9)),
         })
     }
 
     physicsUpdate(time, dt) {
-        this.timeToSpawn -= dt
-        if (this.timeToSpawn <= 0) {
-            this.timeToSpawn += this.spawnDelay
-
-            let vx = this.dir.x * this.launchSpeed
-            let vy = this.dir.y * this.launchSpeed
-            const pos = this.physicsBody.getPosition()
-            let newPuck = new Puck(this.scene, pos.x, pos.y, {
-                spawnVelocity: planck.Vec2(vx, vy)
-            })
-
-            play.pucks.add(newPuck)
-        }
-
         let angle = Math.atan2(this.dir.y, this.dir.x)
         this.physicsBody.setAngle(angle)
         this.setRotation(angle)
@@ -61,7 +53,7 @@ class PuckSpawner extends Phaser.GameObjects.Sprite {
         aproxPos.add(deltaPos)
 
         this.setPosition(aproxPos.x * Physics.unit, aproxPos.y * Physics.unit)
-        this.setDisplaySize(Physics.unit, Physics.unit)
+        this.setDisplaySize(2*Physics.unit, 4*Physics.unit)
     }
 
     destroy() {
